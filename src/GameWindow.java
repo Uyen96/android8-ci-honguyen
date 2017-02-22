@@ -7,6 +7,7 @@ import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.nio.BufferUnderflowException;
+import java.util.ArrayList;
 
 /**
  * Created by HongUyen on 21-Feb-17.
@@ -25,7 +26,8 @@ public class GameWindow extends Frame {
     private int planeY = 600 - 25;
     private int enemyY = 30;
     Thread thread;
-    PlayerBullet playerBullet;
+
+    ArrayList<PlayerBullet> playerBullets = new ArrayList<>();
     public GameWindow() {
         setVisible(true);
         setSize(400, 600);
@@ -94,10 +96,12 @@ public class GameWindow extends Frame {
 
                     }
                     case(KeyEvent.VK_SPACE):{
-                        playerBullet = new PlayerBullet();
+                       PlayerBullet playerBullet = new PlayerBullet();
                         playerBullet.image = loadImageFromRes("bullet.png") ;
                         playerBullet.x = planeX;
                         playerBullet.y = planeY;
+                        playerBullets.add(playerBullet);
+
 
                     }
 
@@ -119,8 +123,8 @@ public class GameWindow extends Frame {
                     }
                     repaint();
                     enemyY +=1;
-                    if(playerBullet != null){
-                    playerBullet.y--;
+                    for(int i = 0 ; i < playerBullets.size(); i++){
+                        playerBullets.get(i).y--;
                     }
 
                 }
@@ -153,10 +157,16 @@ public class GameWindow extends Frame {
             backGraphics.drawImage(backgroundImage, 0, 0, WIDTH, HEIGHT, null);
             backGraphics.drawImage(planeImage, planeX, planeY, 35, 25, null);
             backGraphics.drawImage(enemyGreen, 30,enemyY,30,50, null);
-            if(playerBullet != null) {
-                backGraphics.drawImage(playerBullet.image, playerBullet.x, playerBullet.y, 13, 30, null);
+            for(int i = 0 ; i < playerBullets.size(); i++){
+                backGraphics.drawImage(
+                        playerBullets.get(i).image,
+                        playerBullets.get(i).x,
+                        playerBullets.get(i).y, 13, 30, null);
+
             }
+
             g.drawImage(backBufferedImage, 0, 0, null);
         }
     }
 }
+// data encapsulation game iba
