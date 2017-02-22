@@ -19,9 +19,13 @@ public class GameWindow extends Frame {
      private Graphics backGraphics;
     Image backgroundImage;
     Image planeImage;
+    Image enemyPlaneYellow;
+    Image enemyGreen;
     private int planeX = (400 - 35) / 2;
     private int planeY = 600 - 25;
+    private int enemyY = 30;
     Thread thread;
+    PlayerBullet playerBullet;
     public GameWindow() {
         setVisible(true);
         setSize(400, 600);
@@ -44,9 +48,9 @@ public class GameWindow extends Frame {
         // 1: Load image
         backgroundImage = loadImageFromRes("background.png");
         planeImage = loadImageFromRes("plane3.png");
+        enemyGreen = loadImageFromRes("enemy-green-1.png") ;
 
         // 2: Draw image
-
 
         addKeyListener(new KeyAdapter() {
             @Override
@@ -89,6 +93,13 @@ public class GameWindow extends Frame {
                         break;
 
                     }
+                    case(KeyEvent.VK_SPACE):{
+                        playerBullet = new PlayerBullet();
+                        playerBullet.image = loadImageFromRes("bullet.png") ;
+                        playerBullet.x = planeX;
+                        playerBullet.y = planeY;
+
+                    }
 
                 }
             }
@@ -98,7 +109,7 @@ public class GameWindow extends Frame {
                 super.keyReleased(e);
             }
         });
-        thread = new Thread(new Runnable( ){
+        thread = new Thread(new Runnable(){
             public void run() {
                 while (true) {
                     try {
@@ -107,6 +118,11 @@ public class GameWindow extends Frame {
                         e.printStackTrace();
                     }
                     repaint();
+                    enemyY +=1;
+                    if(playerBullet != null){
+                    playerBullet.y--;
+                    }
+
                 }
             }
         });
@@ -116,11 +132,6 @@ public class GameWindow extends Frame {
         thread.start();
 
     }
-    public void start(){
-
-
-    }
-
 
 
 
@@ -141,8 +152,11 @@ public class GameWindow extends Frame {
             backGraphics = backBufferedImage.getGraphics();
             backGraphics.drawImage(backgroundImage, 0, 0, WIDTH, HEIGHT, null);
             backGraphics.drawImage(planeImage, planeX, planeY, 35, 25, null);
+            backGraphics.drawImage(enemyGreen, 30,enemyY,30,50, null);
+            if(playerBullet != null) {
+                backGraphics.drawImage(playerBullet.image, playerBullet.x, playerBullet.y, 13, 30, null);
+            }
             g.drawImage(backBufferedImage, 0, 0, null);
         }
     }
 }
-// hardcode 17ms
