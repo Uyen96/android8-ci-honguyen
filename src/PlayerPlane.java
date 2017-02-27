@@ -4,42 +4,88 @@ import java.awt.*;
  * Created by HongUyen on 25-Feb-17.
  */
 public class PlayerPlane {
-    public int x;
-    public int y;
-    public int speed;
-    public Image image;
-    public int planeWidth;
-    public int planeHeight;
+    public static final int SPEED = 10;
+    private int x;
+    private int y;
+    private Image image;
+    private int planeWidth;
+    private int planeHeight;
 
-    public PlayerPlane(int x, int y,String Name, int speed) {
-        image=GameWindow.loadImageFromRes(Name);
-        planeWidth = image.getWidth(null);
-        planeHeight = image.getHeight(null);
-        this.x=x;
-        this.y=y;
-        this.speed=speed;
+
+    public PlayerPlane(int x, int y, Image image, int planeWidth, int planeHeight) {
+        this.x = x;
+        this.y = y;
+        this.image = image;
+        this.planeWidth = planeWidth;
+        this.planeHeight = planeHeight;
+    }
+
+    //lay ra
+    public int getX(){
+        return x;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public Image getImage() {
+        return image;
+    }
+
+    public int getPlaneWidth() {
+        return planeWidth;
+    }
+
+    public int getPlaneHeight() {
+        return planeHeight;
+    }
+
+
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
+    public void setPlaneWidth(int planeWidth) {
+        this.planeWidth = planeWidth;
+    }
+
+    public void setPlaneHeight(int planeHeight) {
+        this.planeHeight = planeHeight;
     }
 
     public void moveUp()
     {
-        if(y>=30+speed)
-            y-=speed;
+        if(y >= 30+SPEED)
+            y -= SPEED;
     }
     public void moveDown()
     {
-        if(y<=GameWindow.HEIGHT-planeHeight-speed)
-            y+=speed;
+        if(y <= GameWindow.HEIGHT-planeHeight - SPEED)
+            y +=SPEED;
     }
     public void moveLeft()
     {
-        if(x>=0+speed)
-            x-=speed;
+        if(x >= 0+SPEED)
+            x -= SPEED;
     }
     public void moveRight()
     {
-        if(x<=GameWindow.WIDTH-planeWidth-speed)
-            x+=speed;
+        if(x<=GameWindow.WIDTH-planeWidth-SPEED)
+            x+=SPEED;
     }
+
+//    public void draw (Graphics g){
+//
+//    }
     public void getHitByBullet(EnemyBullet enemyBullet) {
         int bulletLeftBottomX = enemyBullet.x;
         int bulletLeftBottomY = enemyBullet.y + enemyBullet.image.getHeight(null);

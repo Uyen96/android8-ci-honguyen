@@ -30,8 +30,6 @@ public class EnemyPlane {
     public void moveDown() {
 
         y += speed;
-//        if(y>GameWindow.frameHeightSize)
-//            y=0;
     }
 
     public void moveLeft() {

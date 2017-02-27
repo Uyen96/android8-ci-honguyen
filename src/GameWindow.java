@@ -1,3 +1,6 @@
+import controllers.PlayerBulletController;
+import utils.Utils;
+
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.KeyAdapter;
@@ -10,8 +13,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.concurrent.ThreadLocalRandom;
-
-import static java.awt.event.KeyEvent.VK_LEFT;
 
 /**
  * Created by HongUyen on 21-Feb-17.
@@ -35,6 +36,8 @@ public class GameWindow extends Frame {
     private BufferedImage backBufferedImage;
     Thread thread;
     Thread thread1;
+
+    PlayerBulletController playerBulletController;
     private Graphics backGraphics;
     ArrayList<PlayerBullet> playerBulletList = new ArrayList<PlayerBullet>();
 
@@ -42,8 +45,11 @@ public class GameWindow extends Frame {
 
         setVisible(true);
         setSize(WIDTH, HEIGHT);
-
-        playerPlane = new PlayerPlane(WIDTH / 2 - 35, HEIGHT - 50, "plane3.png", PLAYERPLANESPEED);
+        playerPlane = new PlayerPlane(WIDTH / 2 - 35,
+                HEIGHT - 50,
+                Utils.loadImageFromRes("plane3.png"),
+                35,
+                25 );
         enemyPlaneDown = new EnemyPlane(WIDTH / 2 - 32 / 2, 0,
                 "enemy_plane_white_3.png", ENEMYPLANESPEED);
 
@@ -82,15 +88,20 @@ public class GameWindow extends Frame {
                 super.keyPressed(e);
                 switch (e.getKeyCode()){
                         case KeyEvent.VK_SPACE:
-                            PlayerBullet playerBullet = new PlayerBullet(playerPlane.x, playerPlane.y,
-                                    playerPlane.planeWidth, PLAYERBULLETSPEED, "bullet.png", 13, 32);
+                            PlayerBullet playerBullet = new PlayerBullet(playerPlane.getX(),
+                                    playerPlane.getY(),
+                                    playerPlane.getPlaneWidth(), PLAYERBULLETSPEED,
+                                    "bullet.png", 13,
+                                    32);
                             playerBulletList.add(playerBullet);
                             break;
                         case KeyEvent.VK_RIGHT:
                             playerPlane.moveRight();
+
                             break;
                         case KeyEvent.VK_LEFT:
                             playerPlane.moveLeft();
+
                             break;
                         case KeyEvent.VK_UP:
                             playerPlane.moveUp();
@@ -107,6 +118,8 @@ public class GameWindow extends Frame {
                 super.keyReleased(e);
             }
         });
+
+        PlayerBulletController playerBulletController = new PlayerBulletController(300,300);
         thread =  new Thread(new Runnable() {
 
             @Override
@@ -137,6 +150,7 @@ public class GameWindow extends Frame {
                     int randomX = ThreadLocalRandom.current().nextInt(50, GameWindow.WIDTH-50);
                     int randomY=    ThreadLocalRandom.current().nextInt(50, 200);
  //                   powerUp= new PowerUp("power-up.png",randomX,randomY,3);
+                    playerBulletController.run();
                 }
             }
         });
@@ -149,16 +163,6 @@ public class GameWindow extends Frame {
     public void start(){
         thread.start();
         thread1.start();
-    }
-    public static Image loadImageFromRes(String url){
-        try {
-             Image image = ImageIO.read(new File("resources/" + url));
-             return image;
-        } catch (IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-
     }
 
     @Override
@@ -177,14 +181,15 @@ public class GameWindow extends Frame {
                     enemyPlaneCross1.image, enemyPlaneCross1.x, enemyPlaneCross1.y);
             enemyBulletList.add(enemyBullet);
         }
+        playerBulletController.draw(backGraphics);
         if (backBufferedImage != null) {
             backGraphics = backBufferedImage.getGraphics();
             backGraphics.drawImage(backgroundImage.image, backgroundImage.x, backgroundImage.y,
                     backgroundImage.width, backgroundImage.height, null);
             backGraphics.drawImage(backgroundImage2.image, backgroundImage2.x, backgroundImage2.y,
                     backgroundImage2.width, backgroundImage2.height, null);
-            backGraphics.drawImage(playerPlane.image, playerPlane.x, playerPlane.y,
-                    playerPlane.image.getWidth(null), playerPlane.image.getHeight(null), null);
+//            backGraphics.drawImage(playerPlane.getImage(), playerPlane.getX(), playerPlane.getY(),
+//                    playerPlane.getImage().getWidth(null), playerPlane.getImage().getHeight(null), null);
             backGraphics.drawImage(enemyPlaneDown.image, enemyPlaneDown.x, enemyPlaneDown.y,
                     enemyPlaneDown.planeWidth, enemyPlaneDown.planeHeight, null);
             backGraphics.drawImage(enemyPlaneCross1.image, enemyPlaneCross1.x, enemyPlaneCross1.y,
@@ -239,4 +244,6 @@ public class GameWindow extends Frame {
         }
         return image;
     }
-    }
+
+
+}

@@ -20,7 +20,7 @@ public class PlayerBullet {
         this.bulletWidth = bulletWidth;
         this.bulletHeight = bulletHeight;
     }
-
+//run
     public void moveUp() {
         y -= speed;
     }
