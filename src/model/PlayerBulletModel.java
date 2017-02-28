@@ -4,7 +4,7 @@ package model;
  * Created by HongUyen on 26-Feb-17.
  */
 public class PlayerBulletModel {
-    private static final int SPEED = 10;
+    private static final int SPEED = 5;
     private int x;
     private int y;
     private int width;
