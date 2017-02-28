@@ -19,12 +19,20 @@ public class PlayerBulletController {
         this.view = view;
     }
 
+    public PlayerBulletModel getModel() {
+        return model;
+    }
+
+    public PlayerBulletView getView() {
+        return view;
+    }
+
     public void run(){
         model.fly();
     }
 
     public PlayerBulletController(int x, int y){
-       this( new PlayerBulletModel(x, y ,13,30), new PlayerBulletView(Utils.loadImageFromRes("plane3.png")));
+       this( new PlayerBulletModel(x, y ,13,30), new PlayerBulletView(Utils.loadImageFromRes("bullet.png")));
     }
     public void draw(Graphics graphics){
         view.draw(graphics, model);

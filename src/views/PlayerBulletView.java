@@ -14,6 +14,10 @@ public class PlayerBulletView {
         this.image = image;
     }
 
+    public Image getImage() {
+        return image;
+    }
+
     public void draw(Graphics graphics, PlayerBulletModel model){
         graphics.drawImage(image, model.getX(), model.getY(), model.getWidth(), model.getHeight(), null );
     }
