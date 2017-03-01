@@ -6,43 +6,55 @@ import gui.GameWindow;
  * Created by HongUyen on 27-Feb-17.
  */
 public class BackGroundModel {
-    private int x;
-    private int y;
-    private int width = GameWindow.getWIDTH();
-    private int heigh = GameWindow.getHEIGHT();
-    private static final int SPEED = 10;
+    private int x1;
+    private int x2;
+    private int y1;
+    private int y2;
+    private static int SPEED = 1;
+    private int width = GameWindow.SCREEN_WIDTH;
+    private int height = GameWindow.SCREEN_HEIGHT;
 
-
-    public BackGroundModel(int width, int height) {
-        this.x = x;
-        this.y = y;
-//        this.width = width;
-//        this.heigh = height;
-
+    public int getX1() {
+        return x1;
     }
 
-    public BackGroundModel() {
-
+    public int getX2() {
+        return x2;
     }
 
-
-    public int getX() {
-        return x;
+    public int getY1() {
+        return y1;
     }
 
-    public int getY() {
-        return y;
-    }
-
-    public int getHeigh() {
-        return heigh;
+    public int getY2() {
+        return y2;
     }
 
     public int getWidth() {
         return width;
     }
 
-    public void run(){
-        y += SPEED;
+    public int getHeight() {
+        return height;
     }
+
+    public BackGroundModel() {
+        x1 = 0;
+        y1 = 0;
+        x2 = 0;
+        y2 = y1 - height;
+    }
+
+    public void run() {
+        y1 += SPEED;
+        y2 += SPEED;
+        if (y2 > height) {
+            y2 = y1 - height;
+        }
+        if (y1 > height) {
+            y1 = y2 - height;
+        }
+    }
+
+
 }

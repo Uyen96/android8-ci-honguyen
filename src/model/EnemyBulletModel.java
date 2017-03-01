@@ -4,25 +4,26 @@ package model;
  * Created by HongUyen on 27-Feb-17.
  */
 public class EnemyBulletModel {
-    private static final int SPEED = 10;
-    private int x;
-    private int y;
+    private int bulletX;
+    private int bulletY;
     private int width;
     private int height;
+    private int power;
+    private static int SPEED = 4;
 
-    public EnemyBulletModel(int x, int y, int width, int height) {
-        this.x = x;
-        this.y = y;
+    public EnemyBulletModel(int bulletX, int bulletY, int width, int height) {
+        this.bulletX = bulletX;
+        this.bulletY = bulletY;
         this.width = width;
         this.height = height;
     }
 
-    public int getX() {
-        return x;
+    public int getBulletX() {
+        return bulletX;
     }
 
-    public int getY() {
-        return y;
+    public int getBulletY() {
+        return bulletY;
     }
 
     public int getWidth() {
@@ -33,7 +34,23 @@ public class EnemyBulletModel {
         return height;
     }
 
-    public void run(){
-        y += SPEED;
+
+    public void run(int status){
+        switch (status){
+            case 1 :
+                bulletY += SPEED;
+                break;
+
+            case 2 :
+                bulletY += SPEED;
+                bulletX += SPEED/3;
+                break;
+
+            case 3 :
+                bulletY += SPEED;
+                bulletX -= SPEED;
+                break;
+        }
     }
+
 }

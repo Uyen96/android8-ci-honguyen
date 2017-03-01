@@ -17,6 +17,6 @@ public class EnemyBulletView {
     }
 
     public void draw(Graphics g, EnemyBulletModel model){
-        g.drawImage(image, model.getX(), model.getY(), model.getWidth(), model.getHeight(), null );
+        g.drawImage(image, model.getBulletX(), model.getBulletY(), model.getWidth(), model.getHeight(), null );
     }
 }

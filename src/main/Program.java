@@ -9,7 +9,6 @@ import java.util.concurrent.ThreadLocalRandom;
  */
 public class Program {
     public static void main(String[] args) {
-        int randomX = ThreadLocalRandom.current().nextInt(50, GameWindow.WIDTH);
         GameWindow gameWindow = new GameWindow();
         gameWindow.start();
 

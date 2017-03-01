@@ -4,6 +4,7 @@ import javax.imageio.ImageIO;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.util.Random;
 
 /**
  * Created by HongUyen on 26-Feb-17.
@@ -18,5 +19,10 @@ public class Utils {
             return null;
         }
 
+    }
+
+    public static int RandomAll(int max, int min){
+        Random rd = new Random();
+        return rd.nextInt(max - min + 1) + min;
     }
 }

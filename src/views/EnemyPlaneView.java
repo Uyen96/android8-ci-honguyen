@@ -15,7 +15,7 @@ public class EnemyPlaneView {
     }
 
     public void draw(Graphics g, EnemyPlaneModel model){
-        g.drawImage(image, model.getX(), model.getY(), model.getWidth(), model.getHeight(), null);
+        g.drawImage(image, model.getEnemyX(), model.getEnemyX(), model.getWidth(), model.getHeight(), null);
 
     }
 }

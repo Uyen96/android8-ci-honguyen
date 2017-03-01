@@ -5,6 +5,8 @@ package model;
  */
 public class PlayerBulletModel {
     private static final int SPEED = 5;
+    public static final int WIDTH = 6;
+    public static final int HEIGHT = 16;
     private int x;
     private int y;
     private int width;

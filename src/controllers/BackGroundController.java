@@ -21,23 +21,15 @@ public class BackGroundController {
         this.view = view;
     }
 
-    public BackGroundController(int x, int y, int w, int h){
-        this ( new BackGroundModel(),
-                new BackGroundView(Utils.loadImageFromRes("background.png")));
-    }
-
-    public BackGroundModel getModel() {
-        return model;
-    }
-
-    public BackGroundView getView() {
-        return view;
+    public BackGroundController() {
+        this(new BackGroundModel(),new BackGroundView(Utils.loadImageFromRes("background.png")));
     }
 
     public void run(){
         model.run();
     }
+
     public void draw(Graphics g){
-        view.draw(g, model);
+        view.draw(g,model);
     }
 }

@@ -1,11 +1,13 @@
 package controllers;
 
+import gui.GameWindow;
 import model.PlayerBulletModel;
 import utils.Utils;
 import views.PlayerBulletView;
 
 import javax.rmi.CORBA.Util;
 import java.awt.*;
+import java.util.ArrayList;
 
 /**
  * Created by HongUyen on 26-Feb-17.
@@ -32,9 +34,11 @@ public class PlayerBulletController {
     }
 
     public PlayerBulletController(int x, int y){
-       this( new PlayerBulletModel(x, y ,13,30), new PlayerBulletView(Utils.loadImageFromRes("bullet.png")));
+       this( new PlayerBulletModel(x, y , GameWindow.WIDTH,GameWindow.HEIGHT),
+               new PlayerBulletView(Utils.loadImageFromRes("bullet.png")));
     }
     public void draw(Graphics graphics){
         view.draw(graphics, model);
     }
+
 }

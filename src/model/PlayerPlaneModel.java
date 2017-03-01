@@ -1,73 +1,70 @@
 package model;
 
+import gui.GameWindow;
+
 /**
  * Created by HongUyen on 26-Feb-17.
  */
 public class PlayerPlaneModel {
-    private static final int SPEED = 50;
-    private int x;
-    private int y;
+    private int planeX;
+    private int planeY;
     private int width;
     private int height;
+    private static final int SPEED = 5;
 
     public PlayerPlaneModel(int x, int y, int width, int height) {
-        this.x = x;
-        this.y = y;
+        this.planeX = x;
+        this.planeY = y;
         this.width = width;
         this.height = height;
     }
 
-    public static int getSPEED() {
-        return SPEED;
+    public int getPlaneX() {
+        return planeX;
     }
-
-    public int getX() {
-        return x;
+    public int getPlaneY() {
+        return planeY;
     }
-
-    public int getY() {
-        return y;
-    }
-
     public int getWidth() {
         return width;
     }
-
     public int getHeight() {
         return height;
     }
 
+    /**
+     *    move playerPlane
+     * @param status : 1 : up, 2 : right, 3 : left, 4 : right
+     */
+    public void run(int status){
+        switch (status){
+            case 1 :
+                //move up
+                if(planeY - SPEED > 0)
+                    planeY -= SPEED;
+                break;
 
-    public void moveLeft(){
-        x -= SPEED;
-    }
+            case 2 :
+                //move down
+                if(planeY + SPEED < GameWindow.SCREEN_HEIGHT - height)
+                    planeY += SPEED;
+                break;
 
-    public void moveRight(){
-        x += SPEED;
+            case 3 :
+                //move left
+                if(planeX - SPEED > 0) {
+                    planeX -= SPEED;
+                }
+                break;
+
+            case 4 :
+                //move right
+                if(planeX + SPEED < GameWindow.SCREEN_WIDTH - width) {
+                    planeX += SPEED;
+                }
+                break;
+        }
     }
-    public void moveUp(){
-        y -= SPEED;
-    }
-    public void moveDown(){
-        y += SPEED;
-    }
-//    public void run(int n){
-//        switch (n){
-//            case 1 : {
-//                x += SPEED;
-//                break;
-//            }
-//            case 2 :
-//                x -= SPEED;
-//                break;
-//            case 3 :
-//                y -= SPEED;
-//                break;
-//            case 4 :
-//                y += SPEED;
-//                break;
-//        }
-//    }
 
 
 

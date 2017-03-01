@@ -10,13 +10,13 @@ import java.awt.*;
 public class BackGroundView {
     private Image image;
 
-    public BackGroundView(Image image) {
-        this.image = image;
+    public BackGroundView(Image img) {
+        this.image = img;
     }
 
     public void draw(Graphics g, BackGroundModel model){
-        g.drawImage(image, model.getX(), model.getY(), model.getWidth(), model.getHeigh(), null);
+        g.drawImage(image,model.getX1(),model.getY1(),model.getWidth(),model.getHeight(), null );
+        g.drawImage(image,model.getX2(),model.getY2(),model.getWidth(),model.getHeight(), null);
     }
-
 
 }

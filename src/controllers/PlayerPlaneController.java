@@ -13,29 +13,31 @@ public class PlayerPlaneController {
     private PlayerPlaneModel model;
     private PlayerPlaneView view;
 
-    public PlayerPlaneController(PlayerPlaneModel playerPlaneModel, PlayerPlaneView playerPlaneView) {
-        this.model = playerPlaneModel;
-        this.view = playerPlaneView;
+    //ctor
+    public PlayerPlaneController(PlayerPlaneModel model, PlayerPlaneView view) {
+        this.model = model;
+        this.view = view;
+    }
+    //ctor  |  set x,y, width, height
+    public PlayerPlaneController(int planeX, int planeY) {
+        this(new PlayerPlaneModel(planeX,planeY,35,30), new PlayerPlaneView(Utils.loadImageFromRes("plane3.png")) );
     }
 
-    public PlayerPlaneController(int x, int y, int w, int h){
-        this(new PlayerPlaneModel(x,y,w,h),
-                new PlayerPlaneView(Utils.loadImageFromRes("plane3.png")));
-    }
+    //GETTER model
+
 
     public PlayerPlaneModel getModel() {
         return model;
     }
 
-    public PlayerPlaneView getView() {
-        return view;
+    //move plane
+    public void run(int status){
+        model.run(status);
     }
 
+    //draw playerPlane
     public void draw(Graphics g){
         view.draw(g, model);
     }
-//
-//    public void run(){
-//        model.run(model);
-//    }
+
 }
