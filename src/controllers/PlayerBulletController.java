@@ -34,7 +34,7 @@ public class PlayerBulletController {
     }
 
     public PlayerBulletController(int x, int y){
-       this( new PlayerBulletModel(x, y , GameWindow.WIDTH,GameWindow.HEIGHT),
+       this( new PlayerBulletModel(x, y , 13, 30),
                new PlayerBulletView(Utils.loadImageFromRes("bullet.png")));
     }
     public void draw(Graphics graphics){
