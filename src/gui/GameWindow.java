@@ -139,14 +139,15 @@ public class GameWindow extends Frame {
                     backGroundController.run();
                     islandCreate();
                     enemyCreate();
-                  //      controllerManagers.run();
+                    controllerManagers.run();
+                    movePlane();
 
                     try {
                         Thread.sleep(TIME_GAME_LOOP);
                     } catch (InterruptedException e) {
                         e.printStackTrace();
                     }
-                    movePlane();
+
                     repaint();
                 }
 
@@ -170,10 +171,10 @@ public class GameWindow extends Frame {
     }
 
     public void enemyCreate(){
-        int r = RandomAll.nextX(3,1);
-        if (r == 2 ) {
+        int r = RandomAll.nextX(SCREEN_WIDTH - EnemyPlaneModel.DEFAULT_WIDTH, 20);
+        if (r == 20 ) {
             EnemyPlaneController enemyPlaneController = new EnemyPlaneController(
-                    RandomAll.nextX(SCREEN_WIDTH - EnemyPlaneModel.DEFAULT_WIDTH, 0), 0,
+                    RandomAll.nextX(SCREEN_WIDTH - EnemyPlaneModel.DEFAULT_WIDTH,30 ), 0,
                     enemyBulletControllers);
             enemyPlaneControllers.add(enemyPlaneController);
         }
@@ -194,11 +195,6 @@ public class GameWindow extends Frame {
         while(iteratorEnemy.hasNext()){
             if(iteratorEnemy.next().getModel().getX() > SCREEN_HEIGHT)iteratorEnemy.remove();
         }
-
-//        Iterator<EnemyPlaneController> iteratorEnemy2 = enemies2.iterator();
-//        while(iteratorEnemy.hasNext()){
-//            if(iteratorEnemy.next().getModel().getEnemyX() > SCREEN_HEIGHT)iteratorEnemy.remove();
-//        }
 
         //remove plaerbullet out side
         Iterator<PlayerBulletController> iteratorBullet = playerBulletControllers.iterator();
@@ -238,12 +234,11 @@ public class GameWindow extends Frame {
             backGraphics = backBufferedImage.getGraphics();
             backGroundController.draw(backGraphics);
             playerPlaneController.draw(backGraphics);
-
-            //controllerManagers.draw(backGraphics);
+            controllerManagers.draw(backGraphics);
             g.drawImage(backBufferedImage,0,0,null);
+            }
 
         }
-    }
 
     private void movePlane(){
         if(isMoveUp){
