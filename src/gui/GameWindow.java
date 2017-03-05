@@ -1,50 +1,41 @@
 package gui;
 
 import controllers.*;
-import model.EnemyBulletModel;
+import javafx.scene.input.KeyCode;
 import model.EnemyPlaneModel;
-import model.PlayerBulletModel;
-import model.PlayerPlaneModel;
 import utils.KeyInPut;
+import utils.RandomAll;
 import utils.Utils;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.image.BufferedImage;
-import java.util.ArrayList;
-import java.util.BitSet;
-import java.util.Iterator;
-import java.util.Random;
+import java.util.*;
+
+import static java.awt.event.KeyEvent.*;
+import static utils.RandomAll.nextX;
 
 /**
  * Created by HongUyen on 27-Feb-17.
  */
 public class GameWindow extends Frame {
-    private static final int SPEED = 3;
     public static final int SCREEN_HEIGHT = 600;
     public static final int SCREEN_WIDTH = 400;
-    private static final double AOT = 60.0;
+    public static final int TIME_GAME_LOOP = 17;
 
-    private BufferedImage backBufferImage;
+
+
+    private BufferedImage backBufferedImage;
     private Graphics backGraphics;
 
+    private ControllerManager controllerManagers;
+    private BackGroundController backGroundController;
+    private Vector<IsLandController> isLandControllers;
     private PlayerPlaneController playerPlaneController;
-    private EnemyPlaneController enemy;
-
-    private boolean isCount = false;
-    private long now;
-    private long lastTime;
-    private long lastTime2;
-    private long lastTime3;
-    private long lastTimePress = 0;
-    private int delayEnemyMove;
-    private int delayIsland;
-    private int typeEnemy;
-    private int delayItems;
-    Thread thread;
-//bullet
-
-    private Image playerBullet;
+    private Vector<PlayerBulletController> playerBulletControllers;
+    private Vector<EnemyPlaneController> enemyPlaneControllers ;
+    private Vector<EnemyBulletController> enemyBulletControllers ;
 
     private boolean isMoveRight;
     private boolean isMoveLeft;
@@ -52,220 +43,146 @@ public class GameWindow extends Frame {
     private boolean isMoveDown;
     private boolean isShoot;
 
-    private ArrayList<PlayerBulletController> bullets;
-    private ArrayList<EnemyBulletController> enemyBullets;
-    private ArrayList<EnemyPlaneController> enemyYellow;
-    private ArrayList<EnemyPlaneController> enemyBlue;
-    private ArrayList<IsLandController> islands;
-    private BackGroundController background;
-  //  private ArrayList<ItemController> items;
+
+    Thread thread;
+
+
 
     public GameWindow(){
-        setVisible(true);
-        setSize(400,600);
-        bullets = new ArrayList<>();
-        enemyYellow = new ArrayList<>();
-        enemyBlue = new ArrayList<>();
-        islands = new ArrayList<>();
-     //   items = new ArrayList<>();
-        //35 : width of playerPlane;
-        //30 : height of playerPlane
+        this.setVisible(true);
+        this.setSize(SCREEN_WIDTH, SCREEN_HEIGHT);
+        this.setLocationRelativeTo(null);
 
-        //TO DO : fix hash code
-
+        isLandControllers = new Vector<>();
+        playerBulletControllers = new Vector<>();
+        enemyPlaneControllers = new Vector<>();
+        enemyBulletControllers = new Vector<>();
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
-                super.windowClosing(e);
-                System.out.println("WindowClosing");
+                System.out.println("Window closing");
                 System.exit(0);
             }
-
-            @Override
-            public void windowClosed(WindowEvent e) {
-                super.windowClosed(e);
-                System.out.println("WindowClosed");
-            }
         });
 
-        //1: load image
-//
-        //2: Draw image
-        background = new BackGroundController();
-        playerPlaneController = new PlayerPlaneController(SCREEN_WIDTH /2,SCREEN_HEIGHT - 35);
-        playerBullet = Utils.loadImageFromRes("bullet-single.png");
-        update(getGraphics());
-        //repaint();
-
-        addKeyListener(new KeyInPut(this));
-
-        thread = new Thread(new Runnable(){
-            @Override
-            public void run() {
-                lastTime = getNow();
-                lastTime2 = getNow();
-                double ns = 1000000000/AOT;
-                double delta = 0;
-                double alpha = 0;
-                double gamma = 0;
-                int countEnemy = 0;
-                int count = 0;
-                int countIsland = 0;
-                int random = 0;
-                while(true){
-                    background.run();
-                    try {
-                        Thread.sleep(17);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    //smoother movement
-                    movePlane();
-                    repaint();
-                    //enemy move
-                    //shoot bullets
-                    if(bullets != null){
-                        for (PlayerBulletController bullet : bullets)
-                            bullet.run();
-                    }
-
-                    //enemy auto shoot
-                    now = getNow();
-                    delta += (now - lastTime);
-                    lastTime = now;
-
-//                    int x = 0,y = 0;
-                    delayEnemyMove = Utils.RandomAll(10000,2000);
-                    delayIsland = Utils.RandomAll(7000,1200);
-                    delayItems = Utils.RandomAll(50000,20000);
-
-                    if(delta >= delayEnemyMove){
-                        countEnemy++;
-                        typeEnemy = Utils.RandomAll(2,1);
-                        EnemyCreate(typeEnemy);
-//                        System.out.println(countEnemy);
-                        delta-=delayEnemyMove;
-                    }
-//                    countIsland++;
-//                    if(countIsland >= Utils.RandomAll(1000,200)){
-//                        IslandCreate();
-//                        countIsland = 0;
-//                    }
-                    now = getNow();
-                    gamma += (now - lastTime2);
-                    lastTime2 = now;
-
-//                    if(gamma >= delayItems)
-//                    {
-//                        if(items.size() < 3) {
-//                            ItemsCreate();
-//                            gamma -= delayItems;
-//                        }
-//                    }
-//
-//                    for (ItemController item : items){
-//                        item.run();
-//                    }
-
-   //                 GetItems();
-//                    System.out.println(alpha);
-                    //show enemy
-                    if(enemyYellow != null){
-                        for (EnemyPlaneController enemy : enemyYellow){
-                            enemy.run(1);
-
-                            random = Utils.RandomAll(2,1);
-                            if(random == 1) {
-                                count++;
-                                if (count == 45) {
-                                    if (enemy.getModel().getBullets().size() < 3) {
-                                        enemy.addBullet(new EnemyBulletController(enemy.getModel().getX() + enemy.getModel().getWidth() / 2 - 9 / 2,
-                                                enemy.getModel().getHeight() + enemy.getModel().getY()));
-                                    }
-                                    count = 0;
-                                }
-                            }
-                        }
-
-                    }
-
-                    isDestroyEnemy();
-                    for (EnemyPlaneController enemy : enemyYellow) {
-                        if (enemy.getModel().getBullets() != null) {
-                            if(random == 1) {
-                                for (EnemyBulletController enemyBullet : enemy.getModel().getBullets()) {
-                                    enemyBullet.run(1);
-
-                                }
-                            } else if(random == 2){
-                                for (EnemyBulletController enemyBullet : enemy.getModel().getBullets()) {
-                                    enemyBullet.run(2);
-                                }
-                            }
-                        }
-                    }
-
-                    //move island
-                    for (IsLandController island : islands) {
-                        island.run();
-                        if (island.getModel().getY() >= SCREEN_HEIGHT){
-                            island.setDefaultLocation();
-                        }
-                    }
-                    removeByIterator();
-                }
-            }
-        });
+        controllerManagers = new ControllerManager(isLandControllers,
+                playerBulletControllers,
+                enemyPlaneControllers,
+                enemyBulletControllers);
 
 
-        backBufferImage = new BufferedImage(
+        playerPlaneController = new PlayerPlaneController((SCREEN_WIDTH - 35)/2, SCREEN_HEIGHT - 31,
+                playerBulletControllers);
+        backGroundController = new BackGroundController();
+        // Buffer Image
+        backBufferedImage = new BufferedImage(
                 SCREEN_WIDTH,
                 SCREEN_HEIGHT,
                 BufferedImage.TYPE_INT_ARGB);
 
+        backGraphics = backBufferedImage.getGraphics();
+
+
+        addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+                super.keyTyped(e);
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                super.keyPressed(e);
+                int key = e.getKeyCode();
+                if (key == KeyEvent.VK_RIGHT)  {
+                    isMoveRight = true;
+                }
+                else if (key == KeyEvent.VK_LEFT)  {
+                    isMoveLeft = true;
+                }
+                else if (key == KeyEvent.VK_UP) {
+                    isMoveUp = true;
+                }
+                else if (key == KeyEvent.VK_DOWN) {
+                    isMoveDown = true;
+                }
+                if (key == KeyEvent.VK_SPACE ){
+                    isShoot = true;
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                super.keyReleased(e);
+                int key = e.getKeyCode();
+                if (key == KeyEvent.VK_RIGHT)  {
+                    isMoveRight = false;
+                }
+                else if (key == KeyEvent.VK_LEFT)  {
+                    isMoveLeft = false;
+                }
+                else if (key == KeyEvent.VK_UP) {
+                    isMoveUp = false;
+                }
+                else if (key == KeyEvent.VK_DOWN) {
+                    isMoveDown = false;
+                }
+                else if(key == KeyEvent.VK_SPACE){
+                    isShoot = false;
+                }
+            }
+        });
+
+        thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                while (true){
+                    backGroundController.run();
+                    islandCreate();
+                    enemyCreate();
+                  //      controllerManagers.run();
+
+                    try {
+                        Thread.sleep(TIME_GAME_LOOP);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                    movePlane();
+                    repaint();
+                }
+
+            }
+        });
+
 
     }
 
-//    public void GetItems() {
-//        if (items != null) {
-//            Iterator<ItemController> iteratorItem = items.iterator();
-//            while (iteratorItem.hasNext()) {
-//                ItemController itemController = iteratorItem.next();
-//                System.out.println(itemController.getModel().getY()+ "-" + itemController.getModel().getType() );
-//                if (itemController.getModel().getY() >= playerPlaneController.getModel().getPlaneY() &&
-//                        itemController.getModel().getY() <= playerPlaneController.getModel().getPlaneY() + playerPlaneController.getModel().getHeight() &&
-//                        (itemController.getModel().getX() >= playerPlaneController.getModel().getPlaneX() &&
-//                                itemController.getModel().getX() <= playerPlaneController.getModel().getPlaneX() + playerPlaneController.getModel().getPlaneX() - itemController.getModel().getWidth() - 5) ) {
-//                    if (itemController.getModel().getType() == 1) {
-//                        playerBullet = Utils.loadImage("resources/bullet-double.png");
-//                        iteratorItem.remove();
-//                    } else if (itemController.getModel().getType() == 2) {
-//                        iteratorItem.remove();
-//                        enemies.clear();
-//
-//                    }
-//                }
-//            }
-//        }
-//    }
+    public void start(){
+        thread.start();
+    }
 
-//    public void ItemsCreate(){
-////        int random = Utils.RandomAll(3,1);
-//        int random = Utils.RandomAll(2,1);
-//        String direct = "";
-//        if(random == 1){
-//            direct = "resources/power-up.png";
-//        } else if(random == 2){
-//            direct = "resources/bomb.png";
-//        } else if(random == 3){
-//
-//        }
-//        items.add(new ItemController(Utils.RandomAll(SCREEN_WIDTH - 100, 50),0,Utils.loadImage(direct),random));
-//    }
+
+
+
+    public void islandCreate(){
+        if (isLandControllers.size() < 4) {
+            isLandControllers.add(new IsLandController(RandomAll.nextX(SCREEN_WIDTH - 50, 0), 10));
+        }
+    }
+
+    public void enemyCreate(){
+        int r = RandomAll.nextX(3,1);
+        if (r == 2 ) {
+            EnemyPlaneController enemyPlaneController = new EnemyPlaneController(
+                    RandomAll.nextX(SCREEN_WIDTH - EnemyPlaneModel.DEFAULT_WIDTH, 0), 0,
+                    enemyBulletControllers);
+            enemyPlaneControllers.add(enemyPlaneController);
+        }
+    }
+
 
     public void removeByIterator(){
         //remove bullets out side
-        Iterator<PlayerBulletController> iterator = bullets.iterator();
+        Iterator<PlayerBulletController> iterator = playerBulletControllers.iterator();
         while(iterator.hasNext()){
             if(iterator.next().getModel().getHeight() < 0){
                 iterator.remove();
@@ -273,38 +190,28 @@ public class GameWindow extends Frame {
         }
 
         //remove enemy out side
-        Iterator<EnemyPlaneController> iteratorEnemy = enemyYellow.iterator();
+        Iterator<EnemyPlaneController> iteratorEnemy = enemyPlaneControllers.iterator();
         while(iteratorEnemy.hasNext()){
             if(iteratorEnemy.next().getModel().getX() > SCREEN_HEIGHT)iteratorEnemy.remove();
         }
 
-        Iterator<EnemyPlaneController> iteratorEnemy2 = enemyBlue.iterator();
-        while(iteratorEnemy.hasNext()){
-            if(iteratorEnemy.next().getModel().getX() > SCREEN_HEIGHT)iteratorEnemy.remove();
-        }
+//        Iterator<EnemyPlaneController> iteratorEnemy2 = enemies2.iterator();
+//        while(iteratorEnemy.hasNext()){
+//            if(iteratorEnemy.next().getModel().getEnemyX() > SCREEN_HEIGHT)iteratorEnemy.remove();
+//        }
 
         //remove plaerbullet out side
-        Iterator<PlayerBulletController> iteratorBullet = bullets.iterator();
+        Iterator<PlayerBulletController> iteratorBullet = playerBulletControllers.iterator();
         while(iteratorBullet.hasNext()){
             if(iteratorBullet.next().getModel().getY() <= 0)iteratorBullet.remove();
         }
 
-//        Iterator<ItemController> iteratorItem = items.iterator();
-//        while(iteratorItem.hasNext()){
-//            if(iteratorItem.next().getModel().getY() >= SCREEN_HEIGHT)iteratorItem.remove();
-//        }
     }
 
-//    private void IslandCreate() {
-//        if (islands.size() < 4) {
-//            islands.add(new IsLandController(Utils.RandomAll(SCREEN_WIDTH - 50, 0), 0));
-//        }
-//    }
-
     private void isDestroyEnemy() {
-        Iterator<EnemyPlaneController> enemyItr = enemyYellow.iterator();
-        Iterator<PlayerBulletController> playerBulletItr = bullets.iterator();
-        if(bullets.size() == 5){
+        Iterator<EnemyPlaneController> enemyItr = enemyPlaneControllers.iterator();
+        Iterator<PlayerBulletController> playerBulletItr = playerBulletControllers.iterator();
+        if(playerBulletControllers.size() == 5){
 
 
         } else {
@@ -325,177 +232,37 @@ public class GameWindow extends Frame {
             }
         }
     }
+    @Override
+    public synchronized void update(Graphics g) {
+        if(backBufferedImage!=null) {
+            backGraphics = backBufferedImage.getGraphics();
+            backGroundController.draw(backGraphics);
+            playerPlaneController.draw(backGraphics);
 
-
-    //key input
-    public void keyPressed(KeyEvent e)                                                                              {
-        int key = e.getKeyCode();
-
-        if (key == KeyEvent.VK_RIGHT)  {
-            //move plane to right
-            isMoveRight = true;
-
+            //controllerManagers.draw(backGraphics);
+            g.drawImage(backBufferedImage,0,0,null);
 
         }
-        else if (key == KeyEvent.VK_LEFT)  {
-            //move plane to left
-            isMoveLeft = true;
-        }
-        else if (key == KeyEvent.VK_UP) {
-            //move plane to up
-            isMoveUp = true;
-        }
-        else if (key == KeyEvent.VK_DOWN) {
-            //move plane to down
-            isMoveDown = true;
-        }
-        if (key == KeyEvent.VK_SPACE ){
-            isShoot = true;
-        }
-    }
-
-
-    public void keyReleased(KeyEvent e){
-        int key = e.getKeyCode();
-        if (key == KeyEvent.VK_RIGHT)  {
-            //move plane to right
-//            playerPlane.setMoveX(0);
-            isMoveRight = false;
-        }
-        else if (key == KeyEvent.VK_LEFT)  {
-            //move plane to left
-//            playerPlane.setMoveX(0);
-            isMoveLeft = false;
-        }
-        else if (key == KeyEvent.VK_UP) {
-            //move plane to up
-//            playerPlane.setMoveY(0);
-            isMoveUp = false;
-        }
-        else if (key == KeyEvent.VK_DOWN) {
-            //move plane to down
-//            playerPlane.setMoveY(0);
-            isMoveDown = false;
-        }
-        else if(key == KeyEvent.VK_SPACE){
-            isShoot = false;
-        }
-    }
-
-    //random
-
-
-
-    //current time
-    private long getNow(){
-        return System.currentTimeMillis();
     }
 
     private void movePlane(){
-        /**
-         *  1 : UP
-         *  2 : DOWN
-         *  3 : LEFT
-         *  4 : RIGHT
-         */
-        //move plane to up
         if(isMoveUp){
-            playerPlaneController.run(1);
+            playerPlaneController.flyUp();
         }
         //move plane to down
         if(isMoveDown){
-            playerPlaneController.run(2);
+            playerPlaneController.flyDown();
         }
         //move plane to left
         if(isMoveLeft){
-            playerPlaneController.run(3);
+            playerPlaneController.flyLeft();
         }
         //move plane to right
         if(isMoveRight){
-            playerPlaneController.run(4);
+            playerPlaneController.flyRight();
         }
-        if(isShoot && getNow() - lastTimePress > 300){
-            bullets.add(new PlayerBulletController(playerPlaneController.getModel().getX() + 30/2,
-                    playerPlaneController.getModel().getY() - 15));
-//            System.out.println(bullets.size());
-            lastTimePress = getNow();
-        }
-
-    }
-
-    public void start(){
-        thread.start();
-    }
-
-    //load image with path
-
-
-    /**
-     *
-     * @param typeEnemy
-     * 1 : WHITE ENEMY PLANE
-     * 2 : YELLOW ENEMY PLANE
-     */
-    private void EnemyCreate(int typeEnemy){
-        //rd.nextInt(SCREEN_WIDTH - 80 + 1)
-        //
-
-        if(typeEnemy == 1) {
-            enemy = new EnemyPlaneController(Utils.RandomAll(SCREEN_WIDTH - 50, 80), 0,
-                    Utils.loadImageFromRes("enemy_plane_white_3.png"));
-        } else if(typeEnemy == 2){
-            enemy = new EnemyPlaneController(Utils.RandomAll(SCREEN_WIDTH - 50, 80), 0,
-                    Utils.loadImageFromRes("/enemy_plane_yellow_2.png"));
-        }
-        enemyYellow.add(enemy);
-
-    }
-
-    @Override
-    public void update(Graphics g) {
-        if(backBufferImage != null) {
-            backGraphics = backBufferImage.getGraphics();
-            background.draw(backGraphics);
-
-            for (IsLandController island : islands) {
-                island.draw(backGraphics);
-            }
-            //player
-            playerPlaneController.draw(backGraphics);
-            //enemy
-
-            //playerbullet
-            if(bullets != null) {
-                for (PlayerBulletController bullet : bullets) {
-                    bullet.draw(backGraphics);
-                }
-            }
-            //enemy bullet
-            if(enemyBullets != null){
-                for (EnemyBulletController bullet : enemyBullets){
-                    bullet.draw(backGraphics);
-                }
-            }
-
-//            if(items != null){
-//                for (ItemController item : items){
-//                    item.draw(backGraphics);
-//                }
-//            }
-
-            if(enemyYellow != null){
-                for (EnemyPlaneController enemy : enemyYellow){
-                    enemy.draw(backGraphics);
-                }
-            }
-
-            for (EnemyPlaneController enemy : enemyYellow){
-                for (EnemyBulletController bullets : enemy.getModel().getBullets()){
-                    bullets.draw(backGraphics);
-                }
-            }
-
-            g.drawImage(backBufferImage, 0, 0, null);
+        if(isShoot ){
+            playerPlaneController.shoot();
         }
     }
 }

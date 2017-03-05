@@ -21,8 +21,4 @@ public class Utils {
 
     }
 
-    public static int RandomAll(int max, int min){
-        Random rd = new Random();
-        return rd.nextInt(max - min + 1) + min;
-    }
 }

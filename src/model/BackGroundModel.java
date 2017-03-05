@@ -1,59 +1,23 @@
 package model;
 
+import controllers.GameController;
 import gui.GameWindow;
+
+import java.util.ServiceConfigurationError;
 
 /**
  * Created by HongUyen on 27-Feb-17.
  */
-public class BackGroundModel {
-    private int x1;
-    private int x2;
-    private int y1;
-    private int y2;
-    private static int SPEED = 1;
-    private int width = GameWindow.SCREEN_WIDTH;
-    private int height = GameWindow.SCREEN_HEIGHT;
+public class BackGroundModel extends GameModel{
+   public static final int SPEED = 5;
 
-    public int getX1() {
-        return x1;
+    public BackGroundModel(int x, int y, int width, int height) {
+        super(x, y, width, height);
     }
 
-    public int getX2() {
-        return x2;
-    }
-
-    public int getY1() {
-        return y1;
-    }
-
-    public int getY2() {
-        return y2;
-    }
-
-    public int getWidth() {
-        return width;
-    }
-
-    public int getHeight() {
-        return height;
-    }
-
-    public BackGroundModel() {
-        x1 = 0;
-        y1 = 0;
-        x2 = 0;
-        y2 = y1 - height;
-    }
 
     public void run() {
-        y1 += SPEED;
-        y2 += SPEED;
-        if (y2 > height) {
-            y2 = y1 - height;
-        }
-        if (y1 > height) {
-            y1 = y2 - height;
-        }
+        y += SPEED;
     }
 
 

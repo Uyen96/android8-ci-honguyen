@@ -7,16 +7,12 @@ import java.awt.*;
 /**
  * Created by HongUyen on 27-Feb-17.
  */
-public class BackGroundView {
-    private Image image;
+public class BackGroundView extends GameView{
 
-    public BackGroundView(Image img) {
-        this.image = img;
+
+    public BackGroundView(Image image) {
+        super(image);
     }
 
-    public void draw(Graphics g, BackGroundModel model){
-        g.drawImage(image,model.getX1(),model.getY1(),model.getWidth(),model.getHeight(), null );
-        g.drawImage(image,model.getX2(),model.getY2(),model.getWidth(),model.getHeight(), null);
-    }
 
 }

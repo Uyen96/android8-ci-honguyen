@@ -18,6 +18,10 @@ public class GameView {
         return image;
     }
 
+    public void setImage(Image image) {
+        this.image = image;
+    }
+
     public void draw(Graphics graphics, GameModel model){
         graphics.drawImage(image,
                 model.getX(),
